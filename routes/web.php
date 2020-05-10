@@ -13,35 +13,41 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Auth::routes();
+
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/products',                             'ProductController@index');
-Route::get('/product-reviews/{id}',                 'ProductReviewsController@index');
+Route::get('/home',                                     'HomeController@index')->name('home');
 
+Route::get('/products',                                 'ProductController@index');
+Route::get('/product-reviews/{id}',                     'ProductReviewsController@index');
 
-Route::post('/products',                            'ProductController@store');
-Route::delete('/products/{id}',                     'ProductController@destroy');
+Route::group(['middleware' => ['auth']], function () {
 
-Route::put('products/{id}/main-image',              'ProductImageController@update');
+    Route::post('/products',                            'ProductController@store');
+    Route::delete('/products/{id}',                     'ProductController@destroy');
 
-Route::post('order/create',                         'OrderController@store');
+    Route::put('products/{id}/main-image',              'ProductImageController@update');
 
-Route::put('wishlist/add-product/{id}',             'WhishListController@update');
+    Route::post('order/create',                         'OrderController@store');
 
-Route::post('product-reviews/{id}/create',          'ProductReviewsController@store');
+    Route::put('wishlist/add-product/{id}',             'WhishListController@update');
 
-Route::post('product-reviews/{id}/like',            'ProductReviewsLikeController@store');
-Route::post('product-reviews/{id}/dislike',         'ProductReviewsDisLikeController@store');
+    Route::post('product-reviews/{id}/create',          'ProductReviewsController@store');
 
-Route::get('/payment',                              'CheckoutController@index');
+    Route::post('product-reviews/{id}/like',            'ProductReviewsLikeController@store');
+    Route::post('product-reviews/{id}/dislike',         'ProductReviewsDisLikeController@store');
 
-Route::get('payment/apple-pay',                     'ApplePayController@index');
-Route::post('payment/apple-pay',                    'ApplePayController@store');
+    Route::get('/payment',                              'CheckoutController@index');
 
-Route::get('payment/stripe',                        'StripeController@index');
-Route::post('payment/stripe',                       'StripeController@store');
+    Route::get('payment/apple-pay',                     'ApplePayController@index');
+    Route::post('payment/apple-pay',                    'ApplePayController@store');
 
-Route::get('payment/paypal',                        'PaypalController@index');
-Route::post('payment/paypal',                       'PaypalController@store');
+    Route::get('payment/stripe',                        'StripeController@index');
+    Route::post('payment/stripe',                       'StripeController@store');
+
+    Route::get('payment/paypal',                        'PaypalController@index');
+    Route::post('payment/paypal',                       'PaypalController@store');
+});
